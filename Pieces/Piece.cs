@@ -16,7 +16,6 @@ namespace Erebos.Engine.Pieces
 
         public ChessBoardCell ChessBoardCell { get; private set; }
 
-
         public abstract HashSet<ChessBoardCell> FindPossibleMovementPaths();
 
         public virtual void MoveToCell(ChessBoardCell desiredChessBoardCell)
