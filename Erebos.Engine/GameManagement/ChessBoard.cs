@@ -20,6 +20,9 @@ namespace Erebos.Engine.GameManagement
         public GameObject queenPrefab;
         public GameObject kingPrefab;
         public GameObject knightPrefab;
+
+        public Material whitePiecesMaterial;
+        public Material blackPiecesMaterial;
         
         // Properties that hold the game's state
         public Sides CurrentTurn { get; private set; } = Sides.Black;

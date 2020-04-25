@@ -31,6 +31,9 @@ namespace Erebos.Engine.Pieces
             
             Side = ChessBoardCell.Y <= 1 ? Sides.White : Sides.Black;
             gameObject.name = $"{GetType().Name}-{Side}";
+            var meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            meshRenderer.material =
+                Side == Sides.Black ? ChessBoardCell.ChessBoard.blackPiecesMaterial : ChessBoardCell.ChessBoard.whitePiecesMaterial;
         }
 
         public void Select()
