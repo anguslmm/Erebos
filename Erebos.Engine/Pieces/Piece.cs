@@ -10,8 +10,6 @@ namespace Erebos.Engine.Pieces
     {
         public Sides Side { get; set; }
 
-        public Sides OpposingSide => Side == Sides.Black ? Sides.White : Sides.Black;
-
         public bool HasMoved { get; set; }
 
         public ChessBoardCell ChessBoardCell { get; private set; }
@@ -36,12 +34,17 @@ namespace Erebos.Engine.Pieces
                 Side == Sides.Black ? ChessBoardCell.ChessBoard.blackPiecesMaterial : ChessBoardCell.ChessBoard.whitePiecesMaterial;
         }
 
-        public void Select()
+        public void DestroyPiece()
         {
-            Debug.Log($"{this} showing selected!");
+            Destroy(gameObject);
+        }
+
+        public void OnSelected()
+        {
+            Debug.Log($"{this} selected!");
         }
         
-        public void Deselect()
+        public void OnDeselected()
         {
             Debug.Log($"{this} deselected!");
         }

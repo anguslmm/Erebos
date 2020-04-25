@@ -48,8 +48,10 @@ namespace Erebos.Engine.GameManagement
         public Piece SelectedPiece { get; private set; } = null;
         
         // Events related to game state changes
-        public event EventHandler<TurnEndedEventArgs> OnTurnEnded; 
-        public event EventHandler<TurnEndedEventArgs> OnTurnEnding; 
+        public event EventHandler<TurnEndedEventArgs> TurnEnded; 
+        public event EventHandler<TurnEndedEventArgs> TurnEnding;
+
+        public event EventHandler<PieceDestroyedEventArgs> PieceDestroyed; 
 
         void Start()
         {
@@ -66,10 +68,12 @@ namespace Erebos.Engine.GameManagement
         
         public void EndTurn()
         {
-            OnTurnEnding?.Invoke(this, new TurnEndedEventArgs());
-            CurrentTurn = CurrentTurn == Sides.Black ? Sides.White : Sides.Black;
+            TurnEnding?.Invoke(this, new TurnEndedEventArgs());
+            CurrentTurn = CurrentTurn.Opposite();
             TurnNumber++;
-            OnTurnEnded?.Invoke(this, new TurnEndedEventArgs());
+            SelectedPiece.OnDeselected();
+            SelectedPiece = null;
+            TurnEnded?.Invoke(this, new TurnEndedEventArgs());
         }
 
         private void InitializeCells()
@@ -189,28 +193,36 @@ namespace Erebos.Engine.GameManagement
             if (SelectedPiece == null)
             {
                 // We know we're going to try to make a selection
-                // Is the cell empty?
-                if (boardCell.Piece == null || boardCell.Piece.Side != CurrentTurn)
+                // Is the cell empty or an enemy piece?
+                if (!boardCell.IsOccupied || boardCell.Piece.Side != CurrentTurn)
                     return;
 
                 // It must be our piece!
                 SelectedPiece = boardCell.Piece;
-                SelectedPiece.Select();
+                SelectedPiece.OnSelected();
             }
             else
             {
                 // Here we have a piece selected so the player is trying to do something with that piece or change the selection.
                 if (SelectedPiece.Equals(boardCell.Piece))
                 {
-                    SelectedPiece.Deselect();
+                    SelectedPiece.OnDeselected();
                     SelectedPiece = null;
                     return;
                 }
 
                 if (!SelectedPiece.FindPossibleMovementPaths().Contains(boardCell))
                     return;
+                
+                // Ok so the piece is allowed to move here.  Do we need to destroy a piece to move there? 
+                if (boardCell.IsOccupied)
+                {
+                    boardCell.Piece.DestroyPiece();
+                    boardCell.Piece = null;
+                    PieceDestroyed?.Invoke(this, new PieceDestroyedEventArgs());
+                }
 
-                // Here, the piece is allowed to move to this cell.  The piece will know how to move to that cell and tell the occupying piece, if any, what to do.
+                boardCell.Piece = SelectedPiece;
                 SelectedPiece.MoveToCell(boardCell);
                 EndTurn();
             }

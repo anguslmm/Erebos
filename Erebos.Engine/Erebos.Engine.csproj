@@ -46,6 +46,7 @@
         <Compile Include="GameManagement\IInteractable.cs" />
         <Compile Include="GameManagement\InputHandler.cs" />
         <Compile Include="GameManagement\MouseEventArgs.cs" />
+        <Compile Include="GameManagement\PieceDestroyedEventArgs.cs" />
         <Compile Include="GameManagement\TurnEndedEventArgs.cs" />
         <Compile Include="GameManagement\TurnEndingEventArgs.cs" />
         <Compile Include="Pieces\Bishop.cs" />

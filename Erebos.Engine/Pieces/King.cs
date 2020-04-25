@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Erebos.Engine.Enums;
 using Erebos.Engine.GameManagement;
 
 namespace Erebos.Engine.Pieces
 {
     public class King : Piece
     {
-        public bool IsInCheck => ChessBoardCell.ChessBoard.CellsUnderAttackBySide[OpposingSide].Contains(ChessBoardCell);
+        public bool IsInCheck => ChessBoardCell.ChessBoard.CellsUnderAttackBySide[Side.Opposite()].Contains(ChessBoardCell);
 
         public override void MoveToCell(ChessBoardCell desiredChessBoardCell)
         {
@@ -80,7 +81,7 @@ namespace Erebos.Engine.Pieces
                     var count = Math.Abs(x - ChessBoardCell.X);
                     if (count <= 2)
                     {
-                        if (ChessBoardCell.ChessBoard.CellsUnderAttackBySide[OpposingSide].Contains(boardCell))
+                        if (ChessBoardCell.ChessBoard.CellsUnderAttackBySide[Side.Opposite()].Contains(boardCell))
                         {
                             return false;
                         }

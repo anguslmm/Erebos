@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Erebos.Engine.Enums;
 using Erebos.Engine.GameManagement;
 
 namespace Erebos.Engine.Pieces
@@ -12,12 +13,12 @@ namespace Erebos.Engine.Pieces
 
         private void Start()
         {
-            ChessBoardCell.ChessBoard.OnTurnEnding += TurnEndingHandler;
+            ChessBoardCell.ChessBoard.TurnEnding += TurnEndingHandler;
         }
 
         private void TurnEndingHandler(object sender, TurnEndedEventArgs e)
         {
-            if (ChessBoardCell.ChessBoard.CurrentTurn == OpposingSide)
+            if (ChessBoardCell.ChessBoard.CurrentTurn == Side.Opposite())
                 IsEnPassantEligible = false;
         }
 

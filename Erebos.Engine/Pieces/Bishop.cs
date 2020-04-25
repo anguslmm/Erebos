@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Erebos.Engine.Enums;
 using Erebos.Engine.GameManagement;
 
 namespace Erebos.Engine.Pieces
@@ -15,7 +16,7 @@ namespace Erebos.Engine.Pieces
                 var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
-                    if (boardCell.Piece.Side == OpposingSide)
+                    if (boardCell.Piece.Side == Side.Opposite())
                         possibleMovements.Add(boardCell);
                     
                     break;
@@ -30,7 +31,7 @@ namespace Erebos.Engine.Pieces
                 var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
-                    if (boardCell.Piece.Side == OpposingSide)
+                    if (boardCell.Piece.Side == Side.Opposite())
                         possibleMovements.Add(boardCell);
                     
                     break;
@@ -45,7 +46,7 @@ namespace Erebos.Engine.Pieces
                 var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
-                    if (boardCell.Piece.Side == OpposingSide)
+                    if (boardCell.Piece.Side == Side.Opposite())
                         possibleMovements.Add(boardCell);
                     
                     break;
@@ -60,7 +61,7 @@ namespace Erebos.Engine.Pieces
                 var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
-                    if (boardCell.Piece.Side == OpposingSide)
+                    if (boardCell.Piece.Side == Side.Opposite())
                         possibleMovements.Add(boardCell);
                     
                     break;

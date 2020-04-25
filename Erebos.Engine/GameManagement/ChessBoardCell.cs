@@ -14,6 +14,8 @@ namespace Erebos.Engine.GameManagement
         
         public Piece Piece { get; set; }
 
+        public bool IsOccupied => Piece != null;
+
         public ChessBoardCell(int x, int y, ChessBoard chessBoard)
         {
             if (x < 0 || x > 7)
