@@ -7,33 +7,33 @@ namespace Erebos.Engine.Pieces
 {
     public class King : Piece
     {
-        public bool IsInCheck => BoardCell.GameBoard.CellsUnderAttackBySide[OpposingSide].Contains(BoardCell);
+        public bool IsInCheck => ChessBoardCell.ChessBoard.CellsUnderAttackBySide[OpposingSide].Contains(ChessBoardCell);
 
-        public override void MoveToCell(BoardCell desiredBoardCell)
+        public override void MoveToCell(ChessBoardCell desiredChessBoardCell)
         {
             // Are we castling?
             // If so, find the rook we're castling with and tell it we're castling.
-            if (Math.Abs(BoardCell.BoardPosition.X - desiredBoardCell.BoardPosition.X) == 2)
+            if (Math.Abs(ChessBoardCell.X - desiredChessBoardCell.X) == 2)
             {
                 Rook rook;
                 
-                if (desiredBoardCell.BoardPosition.X < BoardCell.BoardPosition.X)
-                    rook = BoardCell.GameBoard.GetCellFromPosition(0, BoardCell.BoardPosition.Y).Piece as Rook;
+                if (desiredChessBoardCell.X < ChessBoardCell.X)
+                    rook = ChessBoardCell.ChessBoard.GetCellFromPosition(0, ChessBoardCell.Y).Piece as Rook;
                 else
-                    rook = BoardCell.GameBoard.GetCellFromPosition(7, BoardCell.BoardPosition.Y).Piece as Rook;
+                    rook = ChessBoardCell.ChessBoard.GetCellFromPosition(7, ChessBoardCell.Y).Piece as Rook;
 
                 if (rook == null)
                     throw new InvalidOperationException("An attempt to castle was made but we failed to find the rook with which the king was meant to castle.");
                 
-                rook.OnCastling(desiredBoardCell);
+                rook.OnCastling(desiredChessBoardCell);
             }
             
-            base.MoveToCell(desiredBoardCell);
+            base.MoveToCell(desiredChessBoardCell);
         }
 
-        public override HashSet<BoardCell> FindPossibleMovementPaths()
+        public override HashSet<ChessBoardCell> FindPossibleMovementPaths()
         {
-            var boardCells = new HashSet<BoardCell>();
+            var boardCells = new HashSet<ChessBoardCell>();
             for (var dx = -1; dx <= 1; dx++) {
                 for (var dy = -1; dy <= 1; dy++)
                 {
@@ -41,7 +41,7 @@ namespace Erebos.Engine.Pieces
                     if (dx == 0 && dy == 0) 
                         continue;
                     
-                    if (BoardCell.GameBoard.TryGetCellFromPosition(BoardCell.BoardPosition.X + dx, BoardCell.BoardPosition.Y + dy, out var boardCell))
+                    if (ChessBoardCell.ChessBoard.TryGetCellFromPosition(ChessBoardCell.X + dx, ChessBoardCell.Y + dy, out var boardCell))
                     {
                         boardCells.Add(boardCell);
                     }
@@ -56,12 +56,12 @@ namespace Erebos.Engine.Pieces
             return boardCells;
         }
 
-        private IEnumerable<BoardCell> FindCastlingMoves()
+        private IEnumerable<ChessBoardCell> FindCastlingMoves()
         {
             if (HasMoved || IsInCheck)
                 yield break;
             
-            foreach (var rook in BoardCell.GameBoard.PiecesBySideInPlay[Side][typeof(Rook)].Cast<Rook>())
+            foreach (var rook in ChessBoardCell.ChessBoard.PiecesBySideInPlay[Side][typeof(Rook)].Cast<Rook>())
             {
                 if (rook.HasMoved)
                     continue;
@@ -70,17 +70,17 @@ namespace Erebos.Engine.Pieces
                 // And are the first two spaces not under attack?
                 bool EvaluateCastlingMovement(int x)
                 {
-                    var boardCell = BoardCell.GameBoard.GetCellFromPosition(x, BoardCell.BoardPosition.Y);
+                    var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                         
                     if (boardCell.Piece != null)
                     {
                         return false;
                     }
                         
-                    var count = Math.Abs(x - BoardCell.BoardPosition.X);
+                    var count = Math.Abs(x - ChessBoardCell.X);
                     if (count <= 2)
                     {
-                        if (BoardCell.GameBoard.CellsUnderAttackBySide[OpposingSide].Contains(boardCell))
+                        if (ChessBoardCell.ChessBoard.CellsUnderAttackBySide[OpposingSide].Contains(boardCell))
                         {
                             return false;
                         }
@@ -89,12 +89,12 @@ namespace Erebos.Engine.Pieces
                     return true;
                 }
 
-                BoardCell moveTo = null;
-                if (BoardCell.BoardPosition.X < rook.BoardCell.BoardPosition.X)
+                ChessBoardCell moveTo = null;
+                if (ChessBoardCell.X < rook.ChessBoardCell.X)
                 {
-                    moveTo = BoardCell.GameBoard.GetCellFromPosition(BoardCell.BoardPosition.X + 2, BoardCell.BoardPosition.Y);
+                    moveTo = ChessBoardCell.ChessBoard.GetCellFromPosition(ChessBoardCell.X + 2, ChessBoardCell.Y);
                     
-                    for (var x = BoardCell.BoardPosition.X; x <= rook.BoardCell.BoardPosition.X; x++)
+                    for (var x = ChessBoardCell.X; x <= rook.ChessBoardCell.X; x++)
                     {
                         if (EvaluateCastlingMovement(x)) 
                             continue;
@@ -105,9 +105,9 @@ namespace Erebos.Engine.Pieces
                 }
                 else
                 {
-                    moveTo = BoardCell.GameBoard.GetCellFromPosition(BoardCell.BoardPosition.X - 2, BoardCell.BoardPosition.Y);
+                    moveTo = ChessBoardCell.ChessBoard.GetCellFromPosition(ChessBoardCell.X - 2, ChessBoardCell.Y);
                     
-                    for (var x = BoardCell.BoardPosition.X; x >= rook.BoardCell.BoardPosition.X; x--)
+                    for (var x = ChessBoardCell.X; x >= rook.ChessBoardCell.X; x--)
                     {
                         if (EvaluateCastlingMovement(x)) 
                             continue;

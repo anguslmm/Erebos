@@ -5,7 +5,7 @@ namespace Erebos.Engine.Pieces
 {
     public class Rook : Piece
     {
-        public override HashSet<BoardCell> FindPossibleMovementPaths()
+        public override HashSet<ChessBoardCell> FindPossibleMovementPaths()
         {
             throw new System.NotImplementedException();
         }
@@ -13,8 +13,8 @@ namespace Erebos.Engine.Pieces
         /// <summary>
         /// Called when a King is castling.
         /// </summary>
-        /// <param name="kingDestinationBoardCell">The board cell to which the king is moving</param>
-        public void OnCastling(BoardCell kingDestinationBoardCell)
+        /// <param name="kingDestinationChessBoardCell">The board cell to which the king is moving</param>
+        public void OnCastling(ChessBoardCell kingDestinationChessBoardCell)
         {
             
         }

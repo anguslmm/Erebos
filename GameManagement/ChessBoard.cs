@@ -7,8 +7,9 @@ using UnityEngine;
 
 namespace Erebos.Engine.GameManagement
 {
-    public class GameBoard : MonoBehaviour, IInteractable
+    public class ChessBoard : MonoBehaviour, IInteractable
     {
+        // Configurable fields to be set in the Unity Editor
         public int tileSize;
 
         public Vector3 firstTileStart;
@@ -19,12 +20,15 @@ namespace Erebos.Engine.GameManagement
         public GameObject queenPrefab;
         public GameObject kingPrefab;
         public GameObject knightPrefab;
+        
+        // Properties that hold the game's state
+        public Sides CurrentTurn { get; private set; } = Sides.Black;
 
-        public GameManager gameManager;
+        public int TurnNumber { get; private set; } = 1;
 
         private readonly Dictionary<Type, GameObject> _pieceToPrefabDictionary = new Dictionary<Type, GameObject>();
 
-        private BoardCell[][] _boardCells;
+        private ChessBoardCell[][] _boardCells;
 
         public Dictionary<Sides, Dictionary<Type, List<Piece>>> PiecesBySideInPlay { get; } = new Dictionary<Sides, Dictionary<Type, List<Piece>>>
         {
@@ -32,13 +36,17 @@ namespace Erebos.Engine.GameManagement
             {Sides.White, new Dictionary<Type, List<Piece>>()}
         };
 
-        public Dictionary<Sides, HashSet<BoardCell>> CellsUnderAttackBySide { get; } = new Dictionary<Sides, HashSet<BoardCell>>
+        public Dictionary<Sides, HashSet<ChessBoardCell>> CellsUnderAttackBySide { get; } = new Dictionary<Sides, HashSet<ChessBoardCell>>
         {
-            {Sides.Black, new HashSet<BoardCell>()},
-            {Sides.White, new HashSet<BoardCell>()}
+            {Sides.Black, new HashSet<ChessBoardCell>()},
+            {Sides.White, new HashSet<ChessBoardCell>()}
         };
 
         public Piece SelectedPiece { get; private set; } = null;
+        
+        // Events related to game state changes
+        public event EventHandler<TurnEndedEventArgs> OnTurnEnded; 
+        public event EventHandler<TurnEndedEventArgs> OnTurnEnding; 
 
         void Start()
         {
@@ -52,16 +60,24 @@ namespace Erebos.Engine.GameManagement
             InitializeCells();
             InitializePieces();
         }
+        
+        public void EndTurn()
+        {
+            OnTurnEnding?.Invoke(this, new TurnEndedEventArgs());
+            CurrentTurn = CurrentTurn == Sides.Black ? Sides.White : Sides.Black;
+            TurnNumber++;
+            OnTurnEnded?.Invoke(this, new TurnEndedEventArgs());
+        }
 
         private void InitializeCells()
         {
-            var boardCells = new BoardCell[8][];
+            var boardCells = new ChessBoardCell[8][];
             for (var x = 0; x < 8; x++)
             {
-                var row = new BoardCell[8];
+                var row = new ChessBoardCell[8];
                 for (var y = 0; y < 8; y++)
                 {
-                    row[y] = new BoardCell(x, y, this);
+                    row[y] = new ChessBoardCell(x, y, this);
                 }
 
                 boardCells[x] = row;
@@ -108,8 +124,6 @@ namespace Erebos.Engine.GameManagement
 
             var piece = Instantiate(prefab).AddComponent<T>();
             piece.transform.parent = gameObject.transform;
-            piece.Side = y <= 1 ? Sides.White : Sides.Black;
-            piece.gameObject.name = $"{typeof(T).Name}-{piece.Side}";
 
             var boardCell = _boardCells[x][y];
             boardCell.Piece = piece;
@@ -123,7 +137,7 @@ namespace Erebos.Engine.GameManagement
             }
         }
 
-        private BoardCell GetCellFromPosition(Vector3 position)
+        private ChessBoardCell GetCellFromPosition(Vector3 position)
         {
             Debug.Log(position);
             var x = (int) (position.x / tileSize * -1);
@@ -133,19 +147,19 @@ namespace Erebos.Engine.GameManagement
             return GetCellFromPosition(x, y);
         }
 
-        public BoardCell GetCellFromPosition(int x, int y)
+        public ChessBoardCell GetCellFromPosition(int x, int y)
         {
             return _boardCells[x][y];
         }
         
-        public bool TryGetCellFromPosition(int x, int y, out BoardCell boardCell)
+        public bool TryGetCellFromPosition(int x, int y, out ChessBoardCell chessBoardCell)
         {
-            boardCell = null;
+            chessBoardCell = null;
 
             if (x < 0 || x > 7 || y < 0 || y > 7)
                 return false;
             
-            boardCell = _boardCells[x][y];
+            chessBoardCell = _boardCells[x][y];
             return true;
         }
 
@@ -157,7 +171,7 @@ namespace Erebos.Engine.GameManagement
 
         public void RecalculateCellsUnderAttack(Sides side)
         {
-            var boardCells = new HashSet<BoardCell>(PiecesBySideInPlay[side].SelectMany(pair =>
+            var boardCells = new HashSet<ChessBoardCell>(PiecesBySideInPlay[side].SelectMany(pair =>
             {
                 return pair.Value.SelectMany(x => x.FindPossibleMovementPaths());
             }));
@@ -173,7 +187,7 @@ namespace Erebos.Engine.GameManagement
             {
                 // We know we're going to try to make a selection
                 // Is the cell empty?
-                if (boardCell.Piece == null || boardCell.Piece.Side != GameManager.Instance.CurrentTurn)
+                if (boardCell.Piece == null || boardCell.Piece.Side != CurrentTurn)
                     return;
 
                 // It must be our piece!
@@ -195,7 +209,7 @@ namespace Erebos.Engine.GameManagement
 
                 // Here, the piece is allowed to move to this cell.  The piece will know how to move to that cell and tell the occupying piece, if any, what to do.
                 SelectedPiece.MoveToCell(boardCell);
-                GameManager.Instance.EndTurn();
+                EndTurn();
             }
         }
 

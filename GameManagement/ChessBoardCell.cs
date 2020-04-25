@@ -1,15 +1,20 @@
 ﻿using System;
+using Erebos.Engine.Pieces;
 using UnityEngine;
 
 namespace Erebos.Engine.GameManagement
 {
-    public class BoardPosition : IEquatable<BoardPosition>
+    public class ChessBoardCell : IEquatable<ChessBoardCell>
     {
+        public ChessBoard ChessBoard { get; }
+        
         public int X { get; }
-        public BoardCell BoardCell { get; }
+        
         public int Y { get; }
+        
+        public Piece Piece { get; set; }
 
-        public BoardPosition(int x, int y, BoardCell boardCell)
+        public ChessBoardCell(int x, int y, ChessBoard chessBoard)
         {
             if (x < 0 || x > 7)
                 throw new ArgumentOutOfRangeException(nameof(x), x, "X must be in the range [0, 7]");
@@ -17,29 +22,24 @@ namespace Erebos.Engine.GameManagement
             if (y < 0 || y > 7)
                 throw new ArgumentOutOfRangeException(nameof(y), y, "Y must be in the range [0, 7]");
             
-            Y = y;
+            ChessBoard = chessBoard;
             X = x;
-            BoardCell = boardCell;
+            Y = y;
         }
-
+        
         public Vector3 ToRelativeCenterPosition()
         {
-            var gameBoardTileSize = BoardCell.GameBoard.tileSize;
+            var gameBoardTileSize = ChessBoard.tileSize;
 
             return new Vector3(
                 gameBoardTileSize * X * -1 - gameBoardTileSize / 2, 
-                BoardCell.GameBoard.firstTileStart.y, 
+                ChessBoard.firstTileStart.y, 
                 gameBoardTileSize * Y * -1 - gameBoardTileSize / 2);
         }
 
-        public bool Equals(BoardPosition other)
+        public bool Equals(ChessBoardCell other)
         {
             return other != null && X == other.X && Y == other.Y;
-        }
-
-        public override string ToString()
-        {
-            return $"{X},{Y}";
         }
 
         public override int GetHashCode()
@@ -48,6 +48,11 @@ namespace Erebos.Engine.GameManagement
             {
                 return (X * 397) ^ Y;
             }
+        }
+        
+        public override string ToString()
+        {
+            return $"{X},{Y}";
         }
     }
 }

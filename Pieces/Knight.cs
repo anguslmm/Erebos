@@ -6,7 +6,7 @@ namespace Erebos.Engine.Pieces
 {
     public class Knight : Piece
     {
-        public override HashSet<BoardCell> FindPossibleMovementPaths()
+        public override HashSet<ChessBoardCell> FindPossibleMovementPaths()
         {
             throw new NotImplementedException();
         }

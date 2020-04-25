@@ -41,10 +41,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Enums\Sides.cs" />
-        <Compile Include="GameManagement\BoardCell.cs" />
-        <Compile Include="GameManagement\BoardPosition.cs" />
-        <Compile Include="GameManagement\GameBoard.cs" />
-        <Compile Include="GameManagement\GameManager.cs" />
+        <Compile Include="GameManagement\ChessBoardCell.cs" />
+        <Compile Include="GameManagement\ChessBoard.cs" />
         <Compile Include="GameManagement\IInteractable.cs" />
         <Compile Include="GameManagement\InputHandler.cs" />
         <Compile Include="GameManagement\MouseEventArgs.cs" />

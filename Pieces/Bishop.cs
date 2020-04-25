@@ -5,14 +5,14 @@ namespace Erebos.Engine.Pieces
 {
     public class Bishop : Piece
     {
-        public override HashSet<BoardCell> FindPossibleMovementPaths()
+        public override HashSet<ChessBoardCell> FindPossibleMovementPaths()
         {
-            var possibleMovements = new HashSet<BoardCell>();
+            var possibleMovements = new HashSet<ChessBoardCell>();
 
-            for (var x = BoardCell.BoardPosition.X + 1; x <= 7; x++)
-            for (var y = BoardCell.BoardPosition.Y + 1; y <= 7; y++)
+            for (var x = ChessBoardCell.X + 1; x <= 7; x++)
+            for (var y = ChessBoardCell.Y + 1; y <= 7; y++)
             {
-                var boardCell = BoardCell.GameBoard.GetCellFromPosition(x, BoardCell.BoardPosition.Y);
+                var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
                     if (boardCell.Piece.Side == OpposingSide)
@@ -24,10 +24,10 @@ namespace Erebos.Engine.Pieces
                 possibleMovements.Add(boardCell);
             }
             
-            for (var x = BoardCell.BoardPosition.X - 1; x >= 0; x--)
-            for (var y = BoardCell.BoardPosition.Y + 1; y <= 7; y++)
+            for (var x = ChessBoardCell.X - 1; x >= 0; x--)
+            for (var y = ChessBoardCell.Y + 1; y <= 7; y++)
             {
-                var boardCell = BoardCell.GameBoard.GetCellFromPosition(x, BoardCell.BoardPosition.Y);
+                var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
                     if (boardCell.Piece.Side == OpposingSide)
@@ -39,10 +39,10 @@ namespace Erebos.Engine.Pieces
                 possibleMovements.Add(boardCell);
             }
             
-            for (var x = BoardCell.BoardPosition.X - 1; x >= 0; x--)
-            for (var y = BoardCell.BoardPosition.Y - 1; y >= 0; y--)
+            for (var x = ChessBoardCell.X - 1; x >= 0; x--)
+            for (var y = ChessBoardCell.Y - 1; y >= 0; y--)
             {
-                var boardCell = BoardCell.GameBoard.GetCellFromPosition(x, BoardCell.BoardPosition.Y);
+                var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
                     if (boardCell.Piece.Side == OpposingSide)
@@ -54,10 +54,10 @@ namespace Erebos.Engine.Pieces
                 possibleMovements.Add(boardCell);
             }
             
-            for (var x = BoardCell.BoardPosition.X + 1; x <= 7; x++)
-            for (var y = BoardCell.BoardPosition.Y - 1; y >= 0; y--)
+            for (var x = ChessBoardCell.X + 1; x <= 7; x++)
+            for (var y = ChessBoardCell.Y - 1; y >= 0; y--)
             {
-                var boardCell = BoardCell.GameBoard.GetCellFromPosition(x, BoardCell.BoardPosition.Y);
+                var boardCell = ChessBoardCell.ChessBoard.GetCellFromPosition(x, ChessBoardCell.Y);
                 if (boardCell.Piece != null)
                 {
                     if (boardCell.Piece.Side == OpposingSide)

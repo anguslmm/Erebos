@@ -6,31 +6,32 @@ using UnityEngine;
 
 namespace Erebos.Engine.Pieces
 {
-    public abstract class Piece : MonoBehaviour, IInteractable, IEquatable<Piece>
+    public abstract class Piece : MonoBehaviour, IEquatable<Piece>
     {
         public Sides Side { get; set; }
 
         public Sides OpposingSide => Side == Sides.Black ? Sides.White : Sides.Black;
 
-        public bool HasMoved { get; set; } = false;
+        public bool HasMoved { get; set; }
 
-        public BoardCell BoardCell { get; private set; } = null;
+        public ChessBoardCell ChessBoardCell { get; private set; }
 
-        public BoardCell OriginCell { get; private set; } = null;
 
-        public abstract HashSet<BoardCell> FindPossibleMovementPaths();
+        public abstract HashSet<ChessBoardCell> FindPossibleMovementPaths();
 
-        public virtual void MoveToCell(BoardCell desiredBoardCell)
+        public virtual void MoveToCell(ChessBoardCell desiredChessBoardCell)
         {
-            BoardCell = desiredBoardCell;
-            gameObject.transform.position = desiredBoardCell.BoardPosition.ToRelativeCenterPosition();
+            ChessBoardCell = desiredChessBoardCell;
+            gameObject.transform.position = desiredChessBoardCell.ToRelativeCenterPosition();
         }
 
-        public virtual void InitializeToCell(BoardCell desiredBoardCell)
+        public virtual void InitializeToCell(ChessBoardCell desiredChessBoardCell)
         {
-            OriginCell = desiredBoardCell;
-            BoardCell = desiredBoardCell;
-            gameObject.transform.position = desiredBoardCell.BoardPosition.ToRelativeCenterPosition();
+            ChessBoardCell = desiredChessBoardCell;
+            gameObject.transform.position = desiredChessBoardCell.ToRelativeCenterPosition();
+            
+            Side = ChessBoardCell.Y <= 1 ? Sides.White : Sides.Black;
+            gameObject.name = $"{GetType().Name}-{Side}";
         }
 
         public void Select()
@@ -41,31 +42,6 @@ namespace Erebos.Engine.Pieces
         public void Deselect()
         {
             Debug.Log($"{this} deselected!");
-        }
-        
-        public void OnPrimaryMouseUp(MouseEventArgs mouseEventArgs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnPrimaryMouseDown(MouseEventArgs mouseEventArgs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnSecondaryMouseUp(MouseEventArgs mouseEventArgs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnSecondaryMouseDown(MouseEventArgs mouseEventArgs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnMouseHover(MouseEventArgs mouseEventArgs)
-        {
-            throw new NotImplementedException();
         }
 
         public bool Equals(Piece other)
