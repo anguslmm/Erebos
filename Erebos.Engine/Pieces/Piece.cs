@@ -12,7 +12,7 @@ namespace Erebos.Engine.Pieces
 
         public bool HasMoved { get; set; }
 
-        public ChessBoardCell ChessBoardCell { get; private set; }
+        public ChessBoardCell ChessBoardCell { get; set; }
 
         public abstract HashSet<ChessBoardCell> FindPossibleMovementPaths();
 
@@ -26,7 +26,7 @@ namespace Erebos.Engine.Pieces
         {
             ChessBoardCell = desiredChessBoardCell;
             gameObject.transform.position = desiredChessBoardCell.ToRelativeCenterPosition();
-            
+
             Side = ChessBoardCell.Y <= 1 ? Sides.White : Sides.Black;
             gameObject.name = $"{GetType().Name}-{Side}";
             var meshRenderer = gameObject.AddComponent<MeshRenderer>();
@@ -43,7 +43,7 @@ namespace Erebos.Engine.Pieces
         {
             Debug.Log($"{this} selected!");
         }
-        
+
         public void OnDeselected()
         {
             Debug.Log($"{this} deselected!");

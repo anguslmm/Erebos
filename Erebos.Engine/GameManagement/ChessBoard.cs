@@ -23,7 +23,7 @@ namespace Erebos.Engine.GameManagement
 
         public Material whitePiecesMaterial;
         public Material blackPiecesMaterial;
-        
+
         // Properties that hold the game's state
         public Sides CurrentTurn { get; private set; } = Sides.Black;
 
@@ -46,12 +46,12 @@ namespace Erebos.Engine.GameManagement
         };
 
         public Piece SelectedPiece { get; private set; } = null;
-        
+
         // Events related to game state changes
-        public event EventHandler<TurnEndedEventArgs> TurnEnded; 
+        public event EventHandler<TurnEndedEventArgs> TurnEnded;
         public event EventHandler<TurnEndedEventArgs> TurnEnding;
 
-        public event EventHandler<PieceDestroyedEventArgs> PieceDestroyed; 
+        public event EventHandler<PieceDestroyedEventArgs> PieceDestroyed;
 
         void Start()
         {
@@ -65,7 +65,7 @@ namespace Erebos.Engine.GameManagement
             InitializeCells();
             InitializePieces();
         }
-        
+
         public void EndTurn()
         {
             TurnEnding?.Invoke(this, new TurnEndedEventArgs());
@@ -74,6 +74,30 @@ namespace Erebos.Engine.GameManagement
             SelectedPiece.OnDeselected();
             SelectedPiece = null;
             TurnEnded?.Invoke(this, new TurnEndedEventArgs());
+        }
+
+        private bool IsMoveValid(Piece piece, ChessBoardCell proposedMovementCell)
+        {
+            var oldPosition = piece.ChessBoardCell;
+            var oldCellsUnderAttack = CellsUnderAttackBySide[piece.Side.Opposite()];
+            piece.ChessBoardCell = proposedMovementCell;
+            var oldPieceAtProposedMovement = proposedMovementCell.Piece;
+            proposedMovementCell.Piece = piece;
+
+            RecalculateCellsUnderAttack(piece.Side.Opposite());
+
+            var myKing = PiecesBySideInPlay[piece.Side][typeof(King)].First();
+
+            // If my movement would put my king under attack (or leave it under attack), this is not a valid move.
+            var isValid = !CellsUnderAttackBySide[piece.Side.Opposite()].Contains(myKing.ChessBoardCell);
+
+            // Return the state back to where it was.
+            piece.ChessBoardCell = oldPosition;
+            oldPosition.Piece = piece;
+            CellsUnderAttackBySide[piece.Side.Opposite()] = oldCellsUnderAttack;
+            proposedMovementCell.Piece = oldPieceAtProposedMovement;
+
+            return isValid;
         }
 
         private void InitializeCells()
@@ -158,14 +182,14 @@ namespace Erebos.Engine.GameManagement
         {
             return _boardCells[x][y];
         }
-        
+
         public bool TryGetCellFromPosition(int x, int y, out ChessBoardCell chessBoardCell)
         {
             chessBoardCell = null;
 
             if (x < 0 || x > 7 || y < 0 || y > 7)
                 return false;
-            
+
             chessBoardCell = _boardCells[x][y];
             return true;
         }
@@ -185,7 +209,7 @@ namespace Erebos.Engine.GameManagement
 
             CellsUnderAttackBySide[side] = boardCells;
         }
-        
+
         public void OnPrimaryMouseUp(MouseEventArgs mouseEventArgs)
         {
             var boardCell = GetCellFromPosition(mouseEventArgs.Point);
@@ -213,7 +237,7 @@ namespace Erebos.Engine.GameManagement
 
                 if (!SelectedPiece.FindPossibleMovementPaths().Contains(boardCell))
                     return;
-                
+
                 // Ok so the piece is allowed to move here.  Do we need to destroy a piece to move there? 
                 if (boardCell.IsOccupied)
                 {
