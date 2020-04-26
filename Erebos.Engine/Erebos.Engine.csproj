@@ -35,8 +35,9 @@
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Xml" />
-        <Reference Include="UnityEngine">
-            <HintPath>C:\Program Files\Unity\Hub\Editor\2020.1.0b5\Editor\Data\Managed\UnityEngine.dll</HintPath>
+        <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\Unity3D.UnityEngine.2018.3.5.1\lib\UnityEngine.dll</HintPath>
+          <Private>True</Private>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -57,6 +58,9 @@
         <Compile Include="Pieces\Queen.cs" />
         <Compile Include="Pieces\Rook.cs" />
         <Compile Include="Utils\Triangulator.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

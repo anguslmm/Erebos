@@ -58,5 +58,19 @@ namespace Erebos.Engine.Pieces
         {
             return gameObject.name;
         }
+        
+        protected IEnumerable<ChessBoardCell> GetCellPath(Vector2Int moveUnit)
+        {
+            var currentCell =
+                ChessBoardCell.ChessBoard.GetCellFromPosition(ChessBoardCell.X + moveUnit.x,
+                    ChessBoardCell.Y + moveUnit.y);
+            // First return all the clear cells in the path
+            while (!currentCell.IsOccupied)
+            {
+                yield return currentCell;
+            }
+            // If the cell is occupied, but an enemy piece, return it as well. (attackable)
+            if (currentCell.Piece.Side != Side) yield return currentCell;
+        }
     }
 }
